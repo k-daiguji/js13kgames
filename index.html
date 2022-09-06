@@ -1,6 +1,86 @@
-<html>
-  <body>
-    <canvas id="can"></canvas>
-    <script src="dist/main.js"></script>
-  </body>
-</html>
+<head>
+  <meta charset="UTF-8">
+  <title>Apex Predator</title>
+  <style type="text/css"> progress { width: 280px } </style>
+  <script src="dist/Character.js"></script>
+  <script src="dist/MainCharacter.js"></script>
+  <script src="dist/Enemy.js"></script>
+  <script src="dist/GameMap.js"></script>
+</head>
+<body>
+  <div>
+    HP
+    <progress id="life_bar" value="100" max="100" min="-1"></progress>
+  </div>
+  <canvas id="main_character" width="300" height="300" autofocus></canvas>
+  <script>
+    var cv = document.getElementById('main_character');
+    var ctx = cv.getContext("2d");
+    var map = new GameMap(0, 0, 20, 20, '#84C98B');
+    var mainCharacter = new MainCharacter(10, 80, 30, map, 1, 1);
+    var enemies = [
+      new Enemy(10, 80, '#FF0000', mainCharacter, map, 1, 9),
+      new Enemy(10, 60, '#00FF00', mainCharacter, map, 9, 6),
+      new Enemy(10, 90, '#0000FF', mainCharacter, map, 10, 7),
+    ];
+
+    var life = document.getElementById('life_bar');
+
+    cv.tabIndex = 1;
+    cv.onkeydown = function(event) {
+      event.preventDefault();
+      switch(event.keyCode) {
+        case 37: // ←
+            mainCharacter.goMove(3)
+            break;
+        case 38: // ↑
+            mainCharacter.goMove(1)
+            break;
+        case 39: // →
+            mainCharacter.goMove(4)
+            break;
+        case 40: // ↓
+            mainCharacter.goMove(2)
+            break;
+      }
+    };
+
+    function playLoop(duration) {
+      ctx.beginPath();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.rect(0, 0, cv.width, cv.height);
+      ctx.fill();
+      ctx.stroke();
+
+      map.draw(ctx);
+
+      mainCharacter.move1(duration);
+      mainCharacter.draw(ctx);
+      enemies.forEach(enemy => {
+        enemy.move1(duration);
+          enemy.killTarget();
+          enemy.draw(ctx);
+      });
+    }
+
+    var previousDrawingTime = 0;
+    function mainLoop(timestamp) {
+      if(previousDrawingTime === 0) {
+        previousDrawingTime = timestamp;
+      }
+
+      if (mainCharacter.isAlive() && --life.value !== -1) {
+          var duration = timestamp - previousDrawingTime;
+          playLoop(duration);
+          previousDrawingTime = timestamp;
+          window.requestAnimationFrame(mainLoop);
+      } else {
+        if (!alert("Game Over!")) {
+          window.location.reload();
+        }
+      }
+    }
+    window.requestAnimationFrame(mainLoop);
+  </script>
+</body>
