@@ -6,7 +6,7 @@
 class GameMap {
   startX: number;
   startY: number;
-  tileSize: { w: number; h: number };
+  tileSize: { width: number; height: number };
   wallFillStyle: string;
   map = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,21 +35,15 @@ class GameMap {
   ) {
     this.startX = startX;
     this.startY = startY;
-    this.tileSize = { w: tileWidth, h: tileHeight };
+    this.tileSize = { width: tileWidth, height: tileHeight };
     this.wallFillStyle = wallFillStyle;
   }
 
-  getRowLength(): number {
-    return this.map.length;
-  }
-  getColLength(): number {
-    return this.map[0].length;
-  }
   getTileWidth(): number {
-    return this.tileSize.w;
+    return this.tileSize.width;
   }
   getTileHeight(): number {
-    return this.tileSize.h;
+    return this.tileSize.height;
   }
   // ピクセルで表される座標の点(x, y)が含まれるタイルを返す
   getTile(x: number, y: number): { row: number; col: number; kind: number } {
@@ -76,27 +70,26 @@ class GameMap {
   // ピクセルで表される座標の点(x, y)が属するタイルの左のタイルが壁であれば true を返す。
   isLeftBlockWall(x: number, y: number) {
     const tile = this.getTile(x, y);
-    return tile.col == 0 || this.map[tile.row][tile.col - 1] == 0;
+    return tile.col === 0 || this.map[tile.row][tile.col - 1] === 0;
   }
   // ピクセルで表される座標の点(x, y)が属するタイルの上のタイルが壁であれば true を返す。
   isAboveBlockWall(x: number, y: number): boolean {
     const tile = this.getTile(x, y);
-    return tile.row == 0 || this.map[tile.row - 1][tile.col] == 0;
+    return tile.row === 0 || this.map[tile.row - 1][tile.col] === 0;
   }
   // ピクセルで表される座標の点(x, y)が属するタイルの右のタイルが壁であれば true を返す。
   isRightBlockWall(x: number, y: number): boolean {
     const tile = this.getTile(x, y);
     return (
-      tile.col + 1 == this.getColLength() ||
-      this.map[tile.row][tile.col + 1] == 0
+      tile.col + 1 === this.map[0].length ||
+      this.map[tile.row][tile.col + 1] === 0
     );
   }
   // ピクセルで表される座標の点(x, y)が属するタイルの下のタイルが壁であれば true を返す。
   isBelowBlockWall(x: number, y: number): boolean {
     const tile = this.getTile(x, y);
     return (
-      tile.row + 1 == this.getRowLength() ||
-      this.map[tile.row + 1][tile.col] == 0
+      tile.row + 1 === this.map.length || this.map[tile.row + 1][tile.col] === 0
     );
   }
   // 壁の描画
@@ -112,12 +105,12 @@ class GameMap {
   }
   draw(ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
-    for (let j = 0; j < this.getRowLength(); j++) {
-      for (let i = 0; i < this.getColLength(); i++) {
-        if (this.map[j][i] == 0) {
-          this.drawWall(ctx, j, i);
+    this.map.forEach((row, i) => {
+      row.forEach((col, j) => {
+        if (col === 0) {
+          this.drawWall(ctx, i, j);
         }
-      }
-    }
+      });
+    });
   }
 }

@@ -18,9 +18,6 @@ class Enemy extends Character {
     this.target = target;
   }
 
-  getRadius(): number {
-    return this.radius;
-  }
   decideDirection(): void {
     if (Math.random() < 0.5) {
       if (this.target.getCx() - this.getCx() < 0) {

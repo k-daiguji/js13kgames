@@ -17,13 +17,11 @@ class MainCharacter extends Character {
     this.dTheta = 3;
   }
 
-  getRadius(): number {
-    return this.radius;
-  }
   getTheta(): number {
     return this.theta;
   }
   chew(): number {
+    console.log("theta", this.theta);
     if (this.theta >= 30 || this.theta <= 0) {
       this.dTheta *= -1;
     }
@@ -31,6 +29,7 @@ class MainCharacter extends Character {
     return this.theta;
   }
   move1(duration: number): void {
+    console.log("hoge");
     this.chew();
     this.move(duration);
   }
