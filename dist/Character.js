@@ -80,14 +80,6 @@ class Character {
     isStop() {
         return !this.isMovingHorizontally() && !this.isMovingVertically();
     }
-    toString() {
-        return `Current position: (${this.position.x}, ${this.position.y})\n
-    Moving direction: (${this.movingDirection.x}, ${this.movingDirection.y})\n
-    Next moving direction: (${this.nextMovingDirection.x}, ${this.nextMovingDirection.y})\n
-    Speed: ${this.speed}\n
-    Moving distance: ${this.movingDistance}\n
-    Alive: ${this.alive}`;
-    }
     isNextMovingDirectionOk() {
         if (this.nextMovingDirection.x < 0) {
             return !this.map.isLeftBlockWall(this.position.x, this.position.y);

@@ -1,20 +1,18 @@
 class Enemy extends Character {
-  radius: number;
-  color: string | CanvasGradient | CanvasPattern;
-  target: MainCharacter;
+  imagePath: string;
+  target: Character;
 
   constructor(
     radius: number,
     speed: number,
-    color: string | CanvasGradient | CanvasPattern,
-    target: MainCharacter,
+    imagePath: string,
+    target: Character,
     map: GameMap,
     row: number,
     col: number
   ) {
     super(radius, speed, map, row, col);
-    this.radius = radius;
-    this.color = color;
+    this.imagePath = imagePath;
     this.target = target;
   }
 
@@ -41,7 +39,7 @@ class Enemy extends Character {
   }
   draw(ctx: CanvasRenderingContext2D): void {
     const img: HTMLImageElement = new Image();
-    img.src = "./dist/resources/zebra.png";
+    img.src = this.imagePath;
     ctx.drawImage(img, this.getCx(), this.getCy());
   }
   killTarget() {

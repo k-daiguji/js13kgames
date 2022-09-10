@@ -1,12 +1,10 @@
 "use strict";
 class Enemy extends Character {
-    radius;
-    color;
+    imagePath;
     target;
-    constructor(radius, speed, color, target, map, row, col) {
+    constructor(radius, speed, imagePath, target, map, row, col) {
         super(radius, speed, map, row, col);
-        this.radius = radius;
-        this.color = color;
+        this.imagePath = imagePath;
         this.target = target;
     }
     decideDirection() {
@@ -35,7 +33,7 @@ class Enemy extends Character {
     }
     draw(ctx) {
         const img = new Image();
-        img.src = "./dist/resources/zebra.png";
+        img.src = this.imagePath;
         ctx.drawImage(img, this.getCx(), this.getCy());
     }
     killTarget() {
