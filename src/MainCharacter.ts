@@ -34,22 +34,8 @@ class MainCharacter extends Character {
     this.move(duration);
   }
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.strokeStyle = "#FF0000";
-    ctx.fillStyle = "#FF0000";
-    ctx.beginPath();
-    ctx.arc(
-      this.getCx(),
-      this.getCy(),
-      this.radius,
-      (this.getTheta() * Math.PI) / 180,
-      ((360 - this.getTheta()) * Math.PI) / 180
-    );
-    ctx.lineTo(this.getCx(), this.getCy());
-    ctx.lineTo(
-      this.getCx() + this.radius * Math.cos((this.getTheta() * Math.PI) / 180),
-      this.position.y +
-        this.radius * Math.sin((this.getTheta() * Math.PI) / 180)
-    );
-    ctx.fill();
+    const img: HTMLImageElement = new Image();
+    img.src = "./dist/resources/plant.png";
+    ctx.drawImage(img, this.getCx(), this.getCy());
   }
 }

@@ -31,10 +31,10 @@ class Character {
         this.alive = true;
     }
     getCx() {
-        return this.position.x;
+        return this.position.x - 12;
     }
     getCy() {
-        return this.position.y;
+        return this.position.y - 12;
     }
     getSpeed() {
         return this.speed;

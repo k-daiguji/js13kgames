@@ -12,11 +12,11 @@
     HP
     <progress id="life_bar" value="100" max="100" min="-1"></progress>
   </div>
-  <canvas id="main_character" width="300" height="300" autofocus></canvas>
+  <canvas id="game_map" width="500" height="500" autofocus></canvas>
   <script>
-    var cv = document.getElementById('main_character');
+    var cv = document.getElementById('game_map');
     var ctx = cv.getContext("2d");
-    var map = new GameMap(0, 0, 20, 20, '#84C98B');
+    var map = new GameMap(0, 0, 30, 30, '#84C98B');
     var mainCharacter = new MainCharacter(10, 80, 30, map, 1, 1);
     var enemies = [
       new Enemy(10, 80, '#FF0000', mainCharacter, map, 1, 9),
@@ -65,13 +65,18 @@
     }
 
     var previousDrawingTime = 0;
+    var count = 0;
     function mainLoop(timestamp) {
       if(previousDrawingTime === 0) {
         previousDrawingTime = timestamp;
       }
 
-      if (mainCharacter.isAlive() && --life.value !== -1) {
+      if (mainCharacter.isAlive() && life.value !== -1) {
           var duration = timestamp - previousDrawingTime;
+          if (count++ > 10) {
+            count = 0;
+            life.value--;
+          }
           playLoop(duration);
           previousDrawingTime = timestamp;
           window.requestAnimationFrame(mainLoop);

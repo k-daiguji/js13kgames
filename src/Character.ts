@@ -38,10 +38,10 @@ class Character {
   }
 
   getCx(): number {
-    return this.position.x;
+    return this.position.x - 12;
   }
   getCy(): number {
-    return this.position.y;
+    return this.position.y - 12;
   }
   getSpeed(): number {
     return this.speed;
