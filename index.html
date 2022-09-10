@@ -1,30 +1,27 @@
 <head>
   <meta charset="UTF-8">
   <title>Apex Predator</title>
-  <style type="text/css"> progress { width: 280px } </style>
+  <style type="text/css"> progress { width: 300px } </style>
   <script src="dist/Character.js"></script>
   <script src="dist/MainCharacter.js"></script>
   <script src="dist/Enemy.js"></script>
   <script src="dist/GameMap.js"></script>
 </head>
 <body>
-  <div>
-    HP
-    <progress id="life_bar" value="100" max="100" min="-1"></progress>
-  </div>
   <canvas id="game_map" width="500" height="500" autofocus></canvas>
   <script>
-    var cv = document.getElementById('game_map');
-    var ctx = cv.getContext("2d");
+    var canvas = document.getElementById('game_map');
+    var ctx = canvas.getContext("2d");
     var map = new GameMap(0, 0, 30, 30, '#84C98B');
-    var mainCharacter = new MainCharacter(10, 80, "./dist/resources/plant.png", map, 1, 1);
-    var zebra = new Enemy(10, 60, "./dist/resources/zebra.png", mainCharacter, map, 1, 9);
-    var zebra2 = new Enemy(10, 60, "./dist/resources/zebra.png", mainCharacter, map, 5, 8);
-    var tiger = new Enemy(10, 90, "./dist/resources/taiga.png", zebra, map, 10, 7);
-    var tiger2 = new Enemy(10, 90, "./dist/resources/taiga.png", zebra2, map, 10, 10);
-    var person = new Enemy(10, 50, "./dist/resources/person_male.png", tiger, map, 4, 7);
-    var person2 = new Enemy(10, 50, "./dist/resources/person_female.png", tiger2, map, 4, 12);
-    mainCharacter.setTarget([person, person2]);
+    var mainCharacter = new MainCharacter("main", 10, 80, "./dist/resources/plant.png", map, 1, 1);
+    var zebra = new Enemy("zebra", 10, 60, "./dist/resources/zebra.png", [mainCharacter], map, 1, 9);
+    var zebra2 = new Enemy("zebra2",10, 60, "./dist/resources/zebra.png", [mainCharacter], map, 5, 7);
+    var tiger = new Enemy("tiger",10, 90, "./dist/resources/taiga.png", [zebra, zebra2], map, 3, 11);
+    var tiger2 = new Enemy("tiger2",10, 90, "./dist/resources/taiga.png", [zebra, zebra2], map, 10, 11);
+    var person = new Enemy("person",10, 50, "./dist/resources/person_male.png", [tiger, tiger2], map, 4, 1);
+    var person2 = new Enemy("person2",10, 50, "./dist/resources/person_female.png", [tiger, tiger2], map, 4, 12);
+    var joker = new Enemy("joker",10, 120, "./dist/resources/joker.png", [zebra, zebra2, tiger, tiger2, person, person2], map, 8, 13);
+    mainCharacter.setTarget([]);
     var enemies = [
       zebra,
       zebra2,
@@ -32,12 +29,11 @@
       tiger2,
       person,
       person2,
+      joker,
     ];
 
-    var life = document.getElementById('life_bar');
-
-    cv.tabIndex = 1;
-    cv.onkeydown = function(event) {
+    canvas.tabIndex = 1;
+    canvas.onkeydown = function(event) {
       event.preventDefault();
       switch(event.keyCode) {
         case 37: // ←
@@ -59,7 +55,7 @@
       ctx.beginPath();
       ctx.fillStyle = '#FFFFFF';
       ctx.strokeStyle = '#FFFFFF';
-      ctx.rect(0, 0, cv.width, cv.height);
+      ctx.rect(0, 0, canvas.width, canvas.height);
       ctx.fill();
       ctx.stroke();
 
@@ -74,11 +70,10 @@
       });
     }
 
-    var previousDrawingTime = 0;
-    var count = 0;
+    var prevDrawTime = 0;
     function mainLoop(timestamp) {
-      if(previousDrawingTime === 0) {
-        previousDrawingTime = timestamp;
+      if(prevDrawTime === 0) {
+        prevDrawTime = timestamp;
       }
       var aliveEnemies = []
       enemies.forEach((enemy) => {
@@ -88,15 +83,17 @@
       })
       enemies = aliveEnemies;
 
-      if (mainCharacter.isAlive() && life.value > 0) {
+      if (mainCharacter.isAlive()) {
           mainCharacter.killTarget();
-          var duration = timestamp - previousDrawingTime;
-          if (count++ > 10) {
-            count = 0;
-            life.value--;
-          }
+          var duration = timestamp - prevDrawTime;
           playLoop(duration);
-          previousDrawingTime = timestamp;
+          if (aliveEnemies.length === 1) {
+            if(!alert("クリア！")) {
+              enemies.push("")
+              window.location.reload();
+            }
+          }
+          prevDrawTime = timestamp;
           window.requestAnimationFrame(mainLoop);
       } else {
         if (!alert("Game Over!")) {

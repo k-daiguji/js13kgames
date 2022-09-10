@@ -3,14 +3,15 @@ class MainCharacter extends Character {
   targets: Character[] | undefined;
 
   constructor(
+    name: string,
     radius: number,
     speed: number,
     imagePath: string,
     map: GameMap,
-    row: number,
-    col: number
+    x: number,
+    y: number
   ) {
-    super(radius, speed, map, row, col);
+    super(name, radius, speed, map, x, y);
     this.imagePath = imagePath;
   }
 
@@ -19,16 +20,31 @@ class MainCharacter extends Character {
     img.src = this.imagePath;
     ctx.drawImage(img, this.getCx(), this.getCy());
   }
-  setTarget(target: Character[]): void {
-    this.targets = target;
-  }
-  killTarget() {
-    if (this.targets) {
-      this.targets.forEach((t: Character): void => {
-        if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
-          t.die();
-        }
-      });
+  goMove(direction: number): void {
+    switch (direction) {
+      case 1:
+        this.nextDirection = { x: 0, y: -1 };
+        break;
+      case 2:
+        this.nextDirection = { x: 0, y: 1 };
+        break;
+      case 3:
+        this.nextDirection = { x: -1, y: 0 };
+        break;
+      case 4:
+        this.nextDirection = { x: 1, y: 0 };
+        break;
     }
+  }
+  setTarget(targets: Character[]): void {
+    this.targets = targets;
+  }
+  killTarget(): void {
+    if (!this.targets) return;
+    this.targets.forEach((t: Character): void => {
+      if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
+        t.die();
+      }
+    });
   }
 }

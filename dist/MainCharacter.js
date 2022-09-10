@@ -2,8 +2,8 @@
 class MainCharacter extends Character {
     imagePath;
     targets;
-    constructor(radius, speed, imagePath, map, row, col) {
-        super(radius, speed, map, row, col);
+    constructor(name, radius, speed, imagePath, map, x, y) {
+        super(name, radius, speed, map, x, y);
         this.imagePath = imagePath;
     }
     draw(ctx) {
@@ -11,16 +11,32 @@ class MainCharacter extends Character {
         img.src = this.imagePath;
         ctx.drawImage(img, this.getCx(), this.getCy());
     }
-    setTarget(target) {
-        this.targets = target;
+    goMove(direction) {
+        switch (direction) {
+            case 1:
+                this.nextDirection = { x: 0, y: -1 };
+                break;
+            case 2:
+                this.nextDirection = { x: 0, y: 1 };
+                break;
+            case 3:
+                this.nextDirection = { x: -1, y: 0 };
+                break;
+            case 4:
+                this.nextDirection = { x: 1, y: 0 };
+                break;
+        }
+    }
+    setTarget(targets) {
+        this.targets = targets;
     }
     killTarget() {
-        if (this.targets) {
-            this.targets.forEach((t) => {
-                if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
-                    t.die();
-                }
-            });
-        }
+        if (!this.targets)
+            return;
+        this.targets.forEach((t) => {
+            if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
+                t.die();
+            }
+        });
     }
 }

@@ -1,37 +1,37 @@
 class Enemy extends Character {
   imagePath: string;
-  target: Character;
+  targets: Character[];
 
   constructor(
+    name: string,
     radius: number,
     speed: number,
     imagePath: string,
-    target: Character,
+    targets: Character[],
     map: GameMap,
-    row: number,
-    col: number
+    x: number,
+    y: number
   ) {
-    super(radius, speed, map, row, col);
+    super(name, radius, speed, map, x, y);
     this.imagePath = imagePath;
-    this.target = target;
+    this.targets = targets;
   }
 
   decideDirection(): void {
-    if (Math.random() < 0.5) {
-      if (this.target.getCx() - this.getCx() < 0) {
-        this.nextMovingDirection.x = -1;
+    this.targets.forEach((t: Character): void => {
+      if (!t.isAlive()) return;
+      if (Math.random() < 0.5) {
+        t.getCx() - this.getCx() < 0
+          ? (this.nextDirection.x = -1)
+          : (this.nextDirection.x = 1);
+        this.nextDirection.y = 0;
       } else {
-        this.nextMovingDirection.x = 1;
+        this.nextDirection.x = 0;
+        t.getCy() - this.getCy() < 0
+          ? (this.nextDirection.y = -1)
+          : (this.nextDirection.y = 1);
       }
-      this.nextMovingDirection.y = 0;
-    } else {
-      this.nextMovingDirection.x = 0;
-      if (this.target.getCy() - this.getCy() < 0) {
-        this.nextMovingDirection.y = -1;
-      } else {
-        this.nextMovingDirection.y = 1;
-      }
-    }
+    });
   }
   move1(duration: number): void {
     this.decideDirection();
@@ -42,11 +42,12 @@ class Enemy extends Character {
     img.src = this.imagePath;
     ctx.drawImage(img, this.getCx(), this.getCy());
   }
-  killTarget() {
-    if (
-      this.getDistance(this.target) <= Math.max(this.radius, this.target.radius)
-    ) {
-      this.target.die();
-    }
+  killTarget(): void {
+    this.targets.forEach((t: Character): void => {
+      if (!t.isAlive()) return;
+      if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
+        t.die();
+      }
+    });
   }
 }

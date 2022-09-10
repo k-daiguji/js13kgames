@@ -1,31 +1,29 @@
 "use strict";
 class Enemy extends Character {
     imagePath;
-    target;
-    constructor(radius, speed, imagePath, target, map, row, col) {
-        super(radius, speed, map, row, col);
+    targets;
+    constructor(name, radius, speed, imagePath, targets, map, x, y) {
+        super(name, radius, speed, map, x, y);
         this.imagePath = imagePath;
-        this.target = target;
+        this.targets = targets;
     }
     decideDirection() {
-        if (Math.random() < 0.5) {
-            if (this.target.getCx() - this.getCx() < 0) {
-                this.nextMovingDirection.x = -1;
+        this.targets.forEach((t) => {
+            if (!t.isAlive())
+                return;
+            if (Math.random() < 0.5) {
+                t.getCx() - this.getCx() < 0
+                    ? (this.nextDirection.x = -1)
+                    : (this.nextDirection.x = 1);
+                this.nextDirection.y = 0;
             }
             else {
-                this.nextMovingDirection.x = 1;
+                this.nextDirection.x = 0;
+                t.getCy() - this.getCy() < 0
+                    ? (this.nextDirection.y = -1)
+                    : (this.nextDirection.y = 1);
             }
-            this.nextMovingDirection.y = 0;
-        }
-        else {
-            this.nextMovingDirection.x = 0;
-            if (this.target.getCy() - this.getCy() < 0) {
-                this.nextMovingDirection.y = -1;
-            }
-            else {
-                this.nextMovingDirection.y = 1;
-            }
-        }
+        });
     }
     move1(duration) {
         this.decideDirection();
@@ -37,8 +35,12 @@ class Enemy extends Character {
         ctx.drawImage(img, this.getCx(), this.getCy());
     }
     killTarget() {
-        if (this.getDistance(this.target) <= Math.max(this.radius, this.target.radius)) {
-            this.target.die();
-        }
+        this.targets.forEach((t) => {
+            if (!t.isAlive())
+                return;
+            if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
+                t.die();
+            }
+        });
     }
 }
