@@ -16,17 +16,17 @@
     var mainCharacter = new MainCharacter("main", 10, 80, "./dist/resources/plant.png", map, 1, 1);
     var zebra = new Enemy("zebra", 10, 60, "./dist/resources/zebra.png", [mainCharacter], map, 1, 9);
     var zebra2 = new Enemy("zebra2",10, 60, "./dist/resources/zebra.png", [mainCharacter], map, 5, 7);
-    var tiger = new Enemy("tiger",10, 90, "./dist/resources/taiga.png", [zebra, zebra2], map, 3, 11);
-    var tiger2 = new Enemy("tiger2",10, 90, "./dist/resources/taiga.png", [zebra, zebra2], map, 10, 11);
-    var person = new Enemy("person",10, 50, "./dist/resources/person_male.png", [tiger, tiger2], map, 4, 1);
-    var person2 = new Enemy("person2",10, 50, "./dist/resources/person_female.png", [tiger, tiger2], map, 4, 12);
-    var joker = new Enemy("joker",10, 120, "./dist/resources/joker.png", [zebra, zebra2, tiger, tiger2, person, person2], map, 8, 13);
+    var lion = new Enemy("tiger",10, 90, "./dist/resources/lion.png", [zebra, zebra2], map, 3, 11);
+    var lion2 = new Enemy("tiger2",10, 90, "./dist/resources/lion.png", [zebra, zebra2], map, 10, 11);
+    var person = new Enemy("person",10, 50, "./dist/resources/person_male.png", [lion, lion2], map, 4, 1);
+    var person2 = new Enemy("person2",10, 50, "./dist/resources/person_female.png", [lion, lion2], map, 4, 12);
+    var joker = new Enemy("joker",10, 120, "./dist/resources/joker.png", [zebra, zebra2, lion, lion2, person, person2], map, 8, 13);
     mainCharacter.setTarget([]);
     var enemies = [
       zebra,
       zebra2,
-      tiger,
-      tiger2,
+      lion,
+      lion2,
       person,
       person2,
       joker,
