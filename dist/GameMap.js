@@ -1,12 +1,7 @@
 "use strict";
-/**
- * マップのコンストラクタ
- * 0: 壁
- * 1: 通路
- */
 class GameMap {
-    startX;
-    startY;
+    x;
+    y;
     tileSize;
     wallFillStyle;
     map = [
@@ -26,10 +21,10 @@ class GameMap {
         [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
-    constructor(startX, startY, tileWidth, tileHeight, wallFillStyle) {
-        this.startX = startX;
-        this.startY = startY;
-        this.tileSize = { width: tileWidth, height: tileHeight };
+    constructor(x, y, width, height, wallFillStyle) {
+        this.x = x;
+        this.y = y;
+        this.tileSize = { width, height };
         this.wallFillStyle = wallFillStyle;
     }
     getTileWidth() {
@@ -38,60 +33,51 @@ class GameMap {
     getTileHeight() {
         return this.tileSize.height;
     }
-    // ピクセルで表される座標の点(x, y)が含まれるタイルを返す
-    getTile(x, y) {
-        const col = Math.floor((x - this.startX) / this.getTileWidth());
-        const row = Math.floor((y - this.startY) / this.getTileHeight());
-        return { row: row, col: col, kind: this.map[row][col] };
+    getTile(width, height) {
+        const x = Math.floor((width - this.x) / this.getTileWidth());
+        const y = Math.floor((height - this.y) / this.getTileHeight());
+        return { x, y, kind: this.map[y][x] };
     }
-    // row行col列目のタイルのピクセルで表される座標の左上の点(x, y)を返す
-    getTileLeftTop(row, col) {
+    getTileLeftTop(y, x) {
         return {
-            left: this.startX + col * this.getTileWidth(),
-            top: this.startY + row * this.getTileHeight(),
+            left: this.x + x * this.getTileWidth(),
+            top: this.y + y * this.getTileHeight(),
         };
     }
-    // ピクセル座標 (x, y) が属しているタイルの中心座標を返す
     getTileCenter(x, y) {
         const tile = this.getTile(x, y);
-        const leftTop = this.getTileLeftTop(tile.row, tile.col);
+        const leftTop = this.getTileLeftTop(tile.y, tile.x);
         return {
             x: Math.floor(leftTop.left + this.getTileWidth() / 2),
             y: Math.floor(leftTop.top + this.getTileHeight() / 2),
         };
     }
-    // ピクセルで表される座標の点(x, y)が属するタイルの左のタイルが壁であれば true を返す。
-    isLeftBlockWall(x, y) {
+    canMoveLeft(x, y) {
         const tile = this.getTile(x, y);
-        return tile.col === 0 || this.map[tile.row][tile.col - 1] === 0;
+        return tile.x === 0 || this.map[tile.y][tile.x - 1] === 0;
     }
-    // ピクセルで表される座標の点(x, y)が属するタイルの上のタイルが壁であれば true を返す。
-    isAboveBlockWall(x, y) {
+    canMoveUp(x, y) {
         const tile = this.getTile(x, y);
-        return tile.row === 0 || this.map[tile.row - 1][tile.col] === 0;
+        return tile.y === 0 || this.map[tile.y - 1][tile.x] === 0;
     }
-    // ピクセルで表される座標の点(x, y)が属するタイルの右のタイルが壁であれば true を返す。
-    isRightBlockWall(x, y) {
+    canMoveRight(x, y) {
         const tile = this.getTile(x, y);
-        return (tile.col + 1 === this.map[0].length ||
-            this.map[tile.row][tile.col + 1] === 0);
+        return (tile.x + 1 === this.map[0].length || this.map[tile.y][tile.x + 1] === 0);
     }
-    // ピクセルで表される座標の点(x, y)が属するタイルの下のタイルが壁であれば true を返す。
-    isBelowBlockWall(x, y) {
+    canMoveDown(x, y) {
         const tile = this.getTile(x, y);
-        return (tile.row + 1 === this.map.length || this.map[tile.row + 1][tile.col] === 0);
+        return tile.y + 1 === this.map.length || this.map[tile.y + 1][tile.x] === 0;
     }
-    // 壁の描画
-    drawWall(ctx, row, col) {
+    drawWall(ctx, y, x) {
         ctx.fillStyle = this.wallFillStyle;
-        ctx.rect(this.startX + col * this.getTileWidth(), this.startY + row * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
+        ctx.rect(this.x + x * this.getTileWidth(), this.y + y * this.getTileHeight(), this.getTileWidth(), this.getTileHeight());
         ctx.fill();
     }
     draw(ctx) {
         ctx.beginPath();
-        this.map.forEach((row, i) => {
-            row.forEach((col, j) => {
-                if (col === 0) {
+        this.map.forEach((y, i) => {
+            y.forEach((x, j) => {
+                if (!x) {
                     this.drawWall(ctx, i, j);
                 }
             });

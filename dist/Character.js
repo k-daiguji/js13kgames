@@ -1,33 +1,27 @@
 "use strict";
-/**
- * キャラクタの共通クラス
- * @param speed 移動速度
- * @param map マップ
- * @param row マップ上の初期位置
- * @param col マップ上の初期位置
- */
 class Character {
+    name;
     radius;
     speed;
     map;
     position;
-    movingDirection;
-    nextMovingDirection;
-    movingDistance;
+    direction;
+    nextDirection;
+    distance;
     alive;
-    constructor(radius, speed, map, row, col) {
+    constructor(name, radius, speed, map, x, y) {
+        this.name = name;
         this.radius = radius;
         this.speed = speed;
         this.map = map;
-        const leftTop = this.map.getTileLeftTop(row, col);
-        // ピクセルベースの移動の描画に必要な情報
+        const leftTop = this.map.getTileLeftTop(x, y);
         this.position = {
             x: Math.floor(leftTop.left + this.map.getTileWidth() / 2),
             y: Math.floor(leftTop.top + this.map.getTileHeight() / 2),
         };
-        this.movingDirection = { x: 0, y: 0 };
-        this.nextMovingDirection = { x: 0, y: 0 };
-        this.movingDistance = 0;
+        this.direction = { x: 0, y: 0 };
+        this.nextDirection = { x: 0, y: 0 };
+        this.distance = 0;
         this.alive = true;
     }
     getCx() {
@@ -36,113 +30,67 @@ class Character {
     getCy() {
         return this.position.y - 12;
     }
+    getDistance(other) {
+        return Math.sqrt(Math.pow(this.getCx() - other.getCx(), 2) +
+            Math.pow(this.getCy() - other.getCy(), 2));
+    }
     getSpeed() {
         return this.speed;
-    }
-    goMove(direction) {
-        if (direction === 1) {
-            this.nextMovingDirection = { x: 0, y: -1 };
-        }
-        else if (direction === 2) {
-            this.nextMovingDirection = { x: 0, y: 1 };
-        }
-        else if (direction === 3) {
-            this.nextMovingDirection = { x: -1, y: 0 };
-        }
-        else if (direction === 4) {
-            this.nextMovingDirection = { x: 1, y: 0 };
-        }
-    }
-    getTop() {
-        return this.position.y - this.radius;
-    }
-    getBottom() {
-        return this.position.y + this.radius;
-    }
-    getLeft() {
-        return this.position.x - this.radius;
-    }
-    getRight() {
-        return this.position.x + this.radius;
     }
     isAlive() {
         return this.alive;
     }
-    die() {
-        this.alive = false;
-    }
-    isMovingHorizontally() {
-        return this.movingDirection.x !== 0;
-    }
-    isMovingVertically() {
-        return this.movingDirection.y !== 0;
-    }
-    isStop() {
-        return !this.isMovingHorizontally() && !this.isMovingVertically();
-    }
-    isNextMovingDirectionOk() {
-        if (this.nextMovingDirection.x < 0) {
-            return !this.map.isLeftBlockWall(this.position.x, this.position.y);
+    canMove() {
+        if (this.nextDirection.x < 0) {
+            return !this.map.canMoveLeft(this.position.x, this.position.y);
         }
-        else if (this.nextMovingDirection.x > 0) {
-            return !this.map.isRightBlockWall(this.position.x, this.position.y);
+        else if (this.nextDirection.x > 0) {
+            return !this.map.canMoveRight(this.position.x, this.position.y);
         }
-        else if (this.nextMovingDirection.y < 0) {
-            return !this.map.isAboveBlockWall(this.position.x, this.position.y);
+        else if (this.nextDirection.y < 0) {
+            return !this.map.canMoveUp(this.position.x, this.position.y);
         }
-        else if (this.nextMovingDirection.y > 0) {
-            return !this.map.isBelowBlockWall(this.position.x, this.position.y);
+        else if (this.nextDirection.y > 0) {
+            return !this.map.canMoveDown(this.position.x, this.position.y);
         }
         else {
             return true;
         }
     }
+    die() {
+        this.alive = false;
+    }
     move(duration) {
-        let arrived = false;
         const distance = (duration * this.getSpeed()) / 1000;
-        if (this.isStop()) {
-            arrived = true;
-        }
-        else if (this.isMovingHorizontally()) {
-            this.movingDistance += distance;
-            if (this.movingDistance >= this.map.getTileWidth()) {
-                this.movingDistance = 0;
-                arrived = true;
+        if (Boolean(this.direction.x)) {
+            this.distance += distance;
+            if (this.distance >= this.map.getTileWidth()) {
+                this.distance = 0;
             }
             else {
-                this.position.x += this.movingDirection.x * distance;
+                this.position.x += this.direction.x * distance;
+                return;
             }
         }
-        else if (this.isMovingVertically()) {
-            this.movingDistance += distance;
-            if (this.movingDistance >= this.map.getTileHeight()) {
-                this.movingDistance = 0;
-                arrived = true;
+        else if (Boolean(this.direction.y)) {
+            this.distance += distance;
+            if (this.distance >= this.map.getTileHeight()) {
+                this.distance = 0;
             }
             else {
-                this.position.y += this.movingDirection.y * distance;
+                this.position.y += this.direction.y * distance;
+                return;
             }
+        }
+        this.position = this.map.getTileCenter(this.position.x, this.position.y);
+        if (this.canMove()) {
+            this.direction.x = this.nextDirection.x;
+            this.direction.y = this.nextDirection.y;
         }
         else {
-            throw "Unexpected moving.";
+            this.nextDirection.x = this.direction.x;
+            this.nextDirection.y = this.direction.y;
+            this.direction = { x: 0, y: 0 };
         }
-        if (arrived) {
-            this.position = this.map.getTileCenter(this.position.x, this.position.y);
-            if (this.isNextMovingDirectionOk()) {
-                this.movingDirection.x = this.nextMovingDirection.x;
-                this.movingDirection.y = this.nextMovingDirection.y;
-            }
-            else {
-                this.nextMovingDirection.x = this.movingDirection.x;
-                this.nextMovingDirection.y = this.movingDirection.y;
-                if (!this.isNextMovingDirectionOk()) {
-                    this.movingDirection = { x: 0, y: 0 };
-                }
-            }
-        }
-    }
-    getDistance(other) {
-        return Math.sqrt(Math.pow(this.getCx() - other.getCx(), 2) +
-            Math.pow(this.getCy() - other.getCy(), 2));
     }
 }
