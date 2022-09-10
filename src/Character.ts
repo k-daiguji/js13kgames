@@ -38,10 +38,10 @@ class Character {
   }
 
   getCx(): number {
-    return this.position.x;
+    return this.position.x - 12;
   }
   getCy(): number {
-    return this.position.y;
+    return this.position.y - 12;
   }
   getSpeed(): number {
     return this.speed;
@@ -83,14 +83,6 @@ class Character {
   }
   isStop(): boolean {
     return !this.isMovingHorizontally() && !this.isMovingVertically();
-  }
-  toString(): string {
-    return `Current position: (${this.position.x}, ${this.position.y})\n
-    Moving direction: (${this.movingDirection.x}, ${this.movingDirection.y})\n
-    Next moving direction: (${this.nextMovingDirection.x}, ${this.nextMovingDirection.y})\n
-    Speed: ${this.speed}\n
-    Moving distance: ${this.movingDistance}\n
-    Alive: ${this.alive}`;
   }
   isNextMovingDirectionOk() {
     if (this.nextMovingDirection.x < 0) {

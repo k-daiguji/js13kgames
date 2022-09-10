@@ -12,16 +12,26 @@
     HP
     <progress id="life_bar" value="100" max="100" min="-1"></progress>
   </div>
-  <canvas id="main_character" width="300" height="300" autofocus></canvas>
+  <canvas id="game_map" width="500" height="500" autofocus></canvas>
   <script>
-    var cv = document.getElementById('main_character');
+    var cv = document.getElementById('game_map');
     var ctx = cv.getContext("2d");
-    var map = new GameMap(0, 0, 20, 20, '#84C98B');
-    var mainCharacter = new MainCharacter(10, 80, 30, map, 1, 1);
+    var map = new GameMap(0, 0, 30, 30, '#84C98B');
+    var mainCharacter = new MainCharacter(10, 80, "./dist/resources/plant.png", map, 1, 1);
+    var zebra = new Enemy(10, 60, "./dist/resources/zebra.png", mainCharacter, map, 1, 9);
+    var zebra2 = new Enemy(10, 60, "./dist/resources/zebra.png", mainCharacter, map, 5, 8);
+    var tiger = new Enemy(10, 90, "./dist/resources/taiga.png", zebra, map, 10, 7);
+    var tiger2 = new Enemy(10, 90, "./dist/resources/taiga.png", zebra2, map, 10, 10);
+    var person = new Enemy(10, 50, "./dist/resources/person_male.png", tiger, map, 4, 7);
+    var person2 = new Enemy(10, 50, "./dist/resources/person_female.png", tiger2, map, 4, 12);
+    mainCharacter.setTarget([person, person2]);
     var enemies = [
-      new Enemy(10, 80, '#FF0000', mainCharacter, map, 1, 9),
-      new Enemy(10, 60, '#00FF00', mainCharacter, map, 9, 6),
-      new Enemy(10, 90, '#0000FF', mainCharacter, map, 10, 7),
+      zebra,
+      zebra2,
+      tiger,
+      tiger2,
+      person,
+      person2,
     ];
 
     var life = document.getElementById('life_bar');
@@ -55,23 +65,36 @@
 
       map.draw(ctx);
 
-      mainCharacter.move1(duration);
+      mainCharacter.move(duration);
       mainCharacter.draw(ctx);
       enemies.forEach(enemy => {
         enemy.move1(duration);
-          enemy.killTarget();
-          enemy.draw(ctx);
+        enemy.killTarget();
+        enemy.draw(ctx);
       });
     }
 
     var previousDrawingTime = 0;
+    var count = 0;
     function mainLoop(timestamp) {
       if(previousDrawingTime === 0) {
         previousDrawingTime = timestamp;
       }
+      var aliveEnemies = []
+      enemies.forEach((enemy) => {
+        if (enemy.isAlive()){
+          aliveEnemies.push(enemy)
+        }
+      })
+      enemies = aliveEnemies;
 
-      if (mainCharacter.isAlive() && --life.value !== -1) {
+      if (mainCharacter.isAlive() && life.value > 0) {
+          mainCharacter.killTarget();
           var duration = timestamp - previousDrawingTime;
+          if (count++ > 10) {
+            count = 0;
+            life.value--;
+          }
           playLoop(duration);
           previousDrawingTime = timestamp;
           window.requestAnimationFrame(mainLoop);
