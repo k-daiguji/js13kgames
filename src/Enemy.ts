@@ -1,4 +1,7 @@
-class Enemy extends Character {
+import GameMap from "./GameMap";
+import { Character } from "./Character";
+
+export class Enemy extends Character {
   imagePath: string;
   targets: Character[];
 
@@ -47,6 +50,7 @@ class Enemy extends Character {
       if (!t.isAlive()) return;
       if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
         t.die();
+        (document.getElementById("sound") as HTMLAudioElement)?.play();
       }
     });
   }

@@ -1,4 +1,6 @@
-class Character {
+import GameMap from "./GameMap";
+
+export class Character {
   name: string;
   radius: number;
   speed: number;
@@ -67,7 +69,7 @@ class Character {
     this.alive = false;
   }
   move(duration: number): void {
-    const distance = (duration * this.getSpeed()) / 1000;
+    const distance: number = (duration * this.getSpeed()) / 1000;
     if (Boolean(this.direction.x)) {
       this.distance += distance;
       if (this.distance >= this.map.getTileWidth()) {

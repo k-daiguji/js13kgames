@@ -1,4 +1,7 @@
-class MainCharacter extends Character {
+import GameMap from "./GameMap";
+import { Character } from "./Character";
+
+export class MainCharacter extends Character {
   imagePath: string;
   targets: Character[] | undefined;
 
