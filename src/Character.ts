@@ -11,19 +11,15 @@ export class Character {
   distance: number;
   alive: boolean;
 
-  constructor(
-    name: string,
-    radius: number,
-    speed: number,
-    map: GameMap,
-    x: number,
-    y: number
-  ) {
+  constructor(name: string, radius: number, speed: number, map: GameMap) {
     this.name = name;
     this.radius = radius;
     this.speed = speed;
     this.map = map;
-    const leftTop = this.map.getTileLeftTop(x, y);
+    const leftTop = this.map.getTileLeftTop(
+      Math.floor(Math.random() * 15),
+      Math.floor(Math.random() * 15)
+    );
     this.position = {
       x: Math.floor(leftTop.left + this.map.getTileWidth() / 2),
       y: Math.floor(leftTop.top + this.map.getTileHeight() / 2),
