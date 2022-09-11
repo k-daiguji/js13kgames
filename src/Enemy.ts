@@ -1,4 +1,7 @@
-class Enemy extends Character {
+import GameMap from "./GameMap";
+import { Character } from "./Character";
+
+export class Enemy extends Character {
   imagePath: string;
   targets: Character[];
 
@@ -7,17 +10,15 @@ class Enemy extends Character {
     radius: number,
     speed: number,
     imagePath: string,
-    targets: Character[],
-    map: GameMap,
-    x: number,
-    y: number
+    map: GameMap
   ) {
-    super(name, radius, speed, map, x, y);
+    super(name, radius, speed, map);
     this.imagePath = imagePath;
-    this.targets = targets;
+    this.targets = [];
   }
 
   decideDirection(): void {
+    if (!this.targets) return;
     this.targets.forEach((t: Character): void => {
       if (!t.isAlive()) return;
       if (Math.random() < 0.5) {
@@ -42,11 +43,16 @@ class Enemy extends Character {
     img.src = this.imagePath;
     ctx.drawImage(img, this.getCx(), this.getCy());
   }
+  setTarget(target: Character): void {
+    this.targets.push(target);
+  }
   killTarget(): void {
+    if (!this.targets) return;
     this.targets.forEach((t: Character): void => {
       if (!t.isAlive()) return;
       if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
         t.die();
+        (document.getElementById("sound") as HTMLAudioElement)?.play();
       }
     });
   }

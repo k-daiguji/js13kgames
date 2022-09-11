@@ -1,106 +1,11 @@
 <head>
   <meta charset="UTF-8">
   <title>Apex Predator</title>
-  <style type="text/css"> progress { width: 300px } </style>
-  <script src="dist/Character.js"></script>
-  <script src="dist/MainCharacter.js"></script>
-  <script src="dist/Enemy.js"></script>
-  <script src="dist/GameMap.js"></script>
+  <audio id="sound" src="dist/sounds/disappear.wav">
+    あなたのブラウザーは <code>audio</code>要素をサポートしていません。
+  </audio>
 </head>
 <body>
-  <canvas id="game_map" width="500" height="500" autofocus></canvas>
-  <script>
-    var canvas = document.getElementById('game_map');
-    var ctx = canvas.getContext("2d");
-    var map = new GameMap(0, 0, 30, 30, '#84C98B');
-    var mainCharacter = new MainCharacter("main", 10, 80, "./dist/resources/plant.png", map, 1, 1);
-    var zebra = new Enemy("zebra", 10, 60, "./dist/resources/zebra.png", [mainCharacter], map, 1, 9);
-    var zebra2 = new Enemy("zebra2",10, 60, "./dist/resources/zebra.png", [mainCharacter], map, 5, 7);
-    var lion = new Enemy("tiger",10, 90, "./dist/resources/lion.png", [zebra, zebra2], map, 3, 11);
-    var lion2 = new Enemy("tiger2",10, 90, "./dist/resources/lion.png", [zebra, zebra2], map, 10, 11);
-    var person = new Enemy("person",10, 50, "./dist/resources/person_male.png", [lion, lion2], map, 4, 1);
-    var person2 = new Enemy("person2",10, 50, "./dist/resources/person_female.png", [lion, lion2], map, 4, 12);
-    var joker = new Enemy("joker",10, 120, "./dist/resources/joker.png", [zebra, zebra2, lion, lion2, person, person2], map, 8, 13);
-    mainCharacter.setTarget([]);
-    var enemies = [
-      zebra,
-      zebra2,
-      lion,
-      lion2,
-      person,
-      person2,
-      joker,
-    ];
-
-    canvas.tabIndex = 1;
-    canvas.onkeydown = function(event) {
-      event.preventDefault();
-      switch(event.keyCode) {
-        case 37: // ←
-            mainCharacter.goMove(3)
-            break;
-        case 38: // ↑
-            mainCharacter.goMove(1)
-            break;
-        case 39: // →
-            mainCharacter.goMove(4)
-            break;
-        case 40: // ↓
-            mainCharacter.goMove(2)
-            break;
-      }
-    };
-
-    function playLoop(duration) {
-      ctx.beginPath();
-      ctx.fillStyle = '#FFFFFF';
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.rect(0, 0, canvas.width, canvas.height);
-      ctx.fill();
-      ctx.stroke();
-
-      map.draw(ctx);
-
-      mainCharacter.move(duration);
-      mainCharacter.draw(ctx);
-      enemies.forEach(enemy => {
-        enemy.move1(duration);
-        enemy.killTarget();
-        enemy.draw(ctx);
-      });
-    }
-
-    var prevDrawTime = 0;
-    function mainLoop(timestamp) {
-      if(prevDrawTime === 0) {
-        prevDrawTime = timestamp;
-      }
-      var aliveEnemies = []
-      enemies.forEach((enemy) => {
-        if (enemy.isAlive()){
-          aliveEnemies.push(enemy)
-        }
-      })
-      enemies = aliveEnemies;
-
-      if (mainCharacter.isAlive()) {
-          mainCharacter.killTarget();
-          var duration = timestamp - prevDrawTime;
-          playLoop(duration);
-          if (aliveEnemies.length === 1) {
-            if(!alert("クリア！")) {
-              enemies.push("")
-              window.location.reload();
-            }
-          }
-          prevDrawTime = timestamp;
-          window.requestAnimationFrame(mainLoop);
-      } else {
-        if (!alert("Game Over!")) {
-          window.location.reload();
-        }
-      }
-    }
-    window.requestAnimationFrame(mainLoop);
-  </script>
+  <canvas id="game_map" width="450" height="450" autofocus></canvas>
+  <script src="dist/main.js"></script>
 </body>

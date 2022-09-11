@@ -1,12 +1,11 @@
 {
     "compilerOptions": {
-      "target": "esnext",
-      "moduleResolution": "node",
+      "sourceMap": true,
+      "target": "ES5",
+      "module": "ES2015",
       "strict": true,
-      "skipLibCheck": true,
-      "declaration": false,
-      "pretty": true,
-      "newLine": "lf",
-      "outDir": "dist"
+      "moduleResolution": "node",
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true
     }
   }

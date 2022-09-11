@@ -1,95 +1,101 @@
-// import GameMap from "./GameMap";
-// import MainCharacter from "./MainCharacter";
-// import Enemy from "./Enemy";
+import GameMap from "./GameMap";
+import { Player } from "./Player";
+import { Enemy } from "./Enemy";
+import CharacterParams from "../dist/CharacterParams.json";
 
-// let canvas: HTMLCanvasElement | undefined;
-// let ctx: CanvasRenderingContext2D | undefined;
+const createEnemy = (map: GameMap, player: Player): Enemy[] => {
+  const enemies: Enemy[] = [];
+  Object.values(CharacterParams).forEach((c): void => {
+    const enemy: Enemy = new Enemy(c.name, c.radius, c.speed, c.imgPath, map);
+    enemies.push(enemy);
+    enemies.forEach((e: Enemy): void => {
+      if (c.target.includes(e.name)) {
+        enemy.setTarget(e);
+      } else if (c.target.includes(player.name)) {
+        enemy.setTarget(player);
+      }
+    });
+  });
+  return enemies;
+};
 
-// Main();
+const Main = (): void => {
+  const canvas: HTMLCanvasElement = document.getElementById(
+    "game_map"
+  ) as HTMLCanvasElement;
+  const ctx: CanvasRenderingContext2D = canvas.getContext(
+    "2d"
+  ) as CanvasRenderingContext2D;
+  const map: GameMap = new GameMap(0, 0, 30, 30, "#84C98B");
+  const p = CharacterParams.grass;
+  const player: Player = new Player(p.name, p.radius, p.speed, p.imgPath, map);
+  let enemies: Enemy[] = createEnemy(map, player);
 
-// function Main() {
-//   canvas = <HTMLCanvasElement>document.getElementById("pac-man") ?? undefined;
-//   if (!canvas) return;
+  canvas.tabIndex = 1;
+  canvas.onkeydown = (event): void => {
+    event.preventDefault();
+    switch (event.key) {
+      case "Up":
+      case "ArrowUp":
+        player.goMove(1);
+        break;
+      case "Down":
+      case "ArrowDown":
+        player.goMove(2);
+        break;
+      case "Left":
+      case "ArrowLeft":
+        player.goMove(3);
+        break;
+      case "Right":
+      case "ArrowRight":
+        player.goMove(4);
+        break;
+    }
+  };
+  const playLoop = (duration: number): void => {
+    ctx.beginPath();
+    ctx.fillStyle = "#FFFFFF";
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fill();
+    ctx.stroke();
+    map.draw(ctx);
 
-//   ctx = canvas.getContext("2d") ?? undefined;
+    player.move(duration);
+    player.draw(ctx);
+    enemies.forEach((enemy): void => {
+      enemy.move1(duration);
+      enemy.killTarget();
+      enemy.draw(ctx);
+    });
+  };
+  let prevDrawTime = 0;
+  const mainLoop = (timestamp: number): void => {
+    const aliveEnemies: Enemy[] = [];
+    enemies.forEach((enemy): void => {
+      if (enemy.isAlive()) {
+        aliveEnemies.push(enemy);
+      }
+    });
+    enemies = aliveEnemies;
+    if (player.isAlive()) {
+      player.killTarget();
+      const duration: number = timestamp - prevDrawTime;
+      playLoop(duration);
+      if (aliveEnemies.length === 1) {
+        enemies.push(aliveEnemies[0]);
+        alert("Clear!");
+        window.location.reload();
+      }
+      prevDrawTime = timestamp;
+      window.requestAnimationFrame(mainLoop);
+    } else {
+      alert("Game Over!");
+      window.location.reload();
+    }
+  };
+  window.requestAnimationFrame(mainLoop);
+};
 
-//   // マップのインスタンスを作成。
-//   const map = new GameMap(0, 0, 20, 20, "#0000FF");
-
-//   // パックマンのインスタンスを作成。
-//   const pacman = new MainCharacter(10, 80, 30, map, 1, 1);
-
-//   const enemies = [
-//     new Enemy(10, 80, "#FF0000", pacman, map, 1, 9),
-//     new Enemy(10, 60, "#00FF00", pacman, map, 9, 6),
-//     new Enemy(10, 90, "#0000FF", pacman, map, 10, 7),
-//   ];
-
-//   // キャンバスをフォーカスできるように設定。
-//   canvas.tabIndex = 1;
-
-//   // キャンバスに対して、キーが押された時の処理方法を設定。
-//   canvas.onkeydown = function (event) {
-//     event.preventDefault(); // ブラウザによって設定されているデフォルトの動作を無効化。
-
-//     // JavaScript では、キーボードのキーそれぞれに整数値が割り当てられており、
-//     // 押されたキーの番号が event オブジェクトの keyCode 属性にセットされる。
-//     switch (event.keyCode) {
-//       case 37: // キーボードの左ボタンが押された。
-//         pacman.goMove(3);
-//         break;
-//       case 38: // キーボードの上ボタンが押された。
-//         pacman.goMove(1);
-//         break;
-//       case 39: // キーボードの右ボタンが押された。
-//         pacman.goMove(4);
-//         break;
-//       case 40: // キーボードの下ボタンが押された。
-//         pacman.goMove(2);
-//         break;
-//     }
-//   };
-
-//   // function playLoop(duration: number) {
-//   //   ctx.beginPath();
-//   //   ctx.fillStyle = "#000000";
-//   //   ctx.strokeStyle = "#0000FF";
-//   //   ctx.rect(0, 0, canvas.width, canvas.height); // 一つ前のフレームに描画された画面を消去。
-//   //   ctx.fill();
-//   //   ctx.stroke();
-
-//   //   map.draw(ctx); // マップを描画。
-
-//   //   pacman.move(duration); // パックマンを移動させる。
-//   //   pacman.draw(ctx); // パックマンを描画。
-
-//   //   for (let i = 0; i < enemies.length; i++) {
-//   //     console.log("akabei", duration, i);
-//   //     enemies[i].move(duration);
-//   //     enemies[i].killTarget();
-//   //     enemies[i].draw(ctx);
-//   //   }
-//   // }
-
-//   // ゲーム画面を描画して進行させる関数。
-//   // window.requestAnimationFrame メソッドから呼び出される。
-//   // let previousDrawingTime = 0;
-//   // function mainLoop(timestamp: number) {
-//   //   if (previousDrawingTime == 0) {
-//   //     previousDrawingTime = timestamp;
-//   //   }
-
-//   //   const duration = timestamp - previousDrawingTime; // 前回の描画からの経過時間 (ms)
-
-//   //   if (pacman.isAlive()) {
-//   //     playLoop(duration);
-//   //   }
-
-//   //   previousDrawingTime = timestamp; // 描画した時刻の更新。
-//   //   window.requestAnimationFrame(mainLoop); // 次のフレームの描画をブラウザに依頼。
-//   // }
-
-//   // // ブラウザに mainLoop 関数を用いてゲーム画面の描画をするように依頼。
-//   // // 描画のタイミングはブラウザが決定する。
-//   // window.requestAnimationFrame(mainLoop);
-// }
+Main();

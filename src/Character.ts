@@ -1,4 +1,6 @@
-class Character {
+import GameMap from "./GameMap";
+
+export class Character {
   name: string;
   radius: number;
   speed: number;
@@ -9,19 +11,13 @@ class Character {
   distance: number;
   alive: boolean;
 
-  constructor(
-    name: string,
-    radius: number,
-    speed: number,
-    map: GameMap,
-    x: number,
-    y: number
-  ) {
+  constructor(name: string, radius: number, speed: number, map: GameMap) {
     this.name = name;
     this.radius = radius;
     this.speed = speed;
     this.map = map;
-    const leftTop = this.map.getTileLeftTop(x, y);
+    const position = map.randomOnLoad();
+    const leftTop = this.map.getTileLeftTop(position.x, position.y);
     this.position = {
       x: Math.floor(leftTop.left + this.map.getTileWidth() / 2),
       y: Math.floor(leftTop.top + this.map.getTileHeight() / 2),
@@ -67,7 +63,7 @@ class Character {
     this.alive = false;
   }
   move(duration: number): void {
-    const distance = (duration * this.getSpeed()) / 1000;
+    const distance: number = (duration * this.getSpeed()) / 1000;
     if (Boolean(this.direction.x)) {
       this.distance += distance;
       if (this.distance >= this.map.getTileWidth()) {

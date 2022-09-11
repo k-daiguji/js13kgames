@@ -1,4 +1,7 @@
-class MainCharacter extends Character {
+import GameMap from "./GameMap";
+import { Character } from "./Character";
+
+export class Player extends Character {
   imagePath: string;
   targets: Character[] | undefined;
 
@@ -7,11 +10,9 @@ class MainCharacter extends Character {
     radius: number,
     speed: number,
     imagePath: string,
-    map: GameMap,
-    x: number,
-    y: number
+    map: GameMap
   ) {
-    super(name, radius, speed, map, x, y);
+    super(name, radius, speed, map);
     this.imagePath = imagePath;
   }
 
