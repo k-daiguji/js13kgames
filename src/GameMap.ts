@@ -1,3 +1,5 @@
+import { setupMaze } from "./GenerateMap";
+
 type tile = { x: number; y: number; kind: number };
 type tileLeftTop = { left: number; top: number };
 
@@ -6,23 +8,7 @@ export default class GameMap {
   y: number;
   tileSize: { width: number; height: number };
   wallFillStyle: string;
-  map = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-    [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0],
-    [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0],
-    [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-    [0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ];
+  map: number[][];
 
   constructor(
     x: number,
@@ -35,8 +21,12 @@ export default class GameMap {
     this.y = y;
     this.tileSize = { width, height };
     this.wallFillStyle = wallFillStyle;
+    this.map = this.generateMap();
   }
 
+  generateMap(): number[][] {
+    return setupMaze();
+  }
   getTileWidth(): number {
     return this.tileSize.width;
   }

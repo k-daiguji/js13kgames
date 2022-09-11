@@ -21,7 +21,7 @@ const createEnemy = (map: GameMap, player: Player): Enemy[] => {
 
 const Main = (): void => {
   const canvas: HTMLCanvasElement = document.getElementById(
-    "game_map"
+    "main"
   ) as HTMLCanvasElement;
   const ctx: CanvasRenderingContext2D = canvas.getContext(
     "2d"
