@@ -16,10 +16,8 @@ export class Character {
     this.radius = radius;
     this.speed = speed;
     this.map = map;
-    const leftTop = this.map.getTileLeftTop(
-      Math.floor(Math.random() * 15),
-      Math.floor(Math.random() * 15)
-    );
+    const position = map.randomOnLoad();
+    const leftTop = this.map.getTileLeftTop(position.x, position.y);
     this.position = {
       x: Math.floor(leftTop.left + this.map.getTileWidth() / 2),
       y: Math.floor(leftTop.top + this.map.getTileHeight() / 2),

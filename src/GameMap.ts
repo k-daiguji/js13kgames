@@ -80,6 +80,15 @@ export default class GameMap {
     const tile: tile = this.getTile(x, y);
     return tile.y + 1 === this.map.length || this.map[tile.y + 1][tile.x] === 0;
   }
+  randomOnLoad(): { x: number; y: number } {
+    let x = Math.floor(Math.random() * 15);
+    let y = Math.floor(Math.random() * 15);
+    while (!this.map[x][y]) {
+      x = Math.floor(Math.random() * 15);
+      y = Math.floor(Math.random() * 15);
+    }
+    return { x, y };
+  }
   drawWall(ctx: CanvasRenderingContext2D, y: number, x: number): void {
     ctx.fillStyle = this.wallFillStyle;
     ctx.rect(

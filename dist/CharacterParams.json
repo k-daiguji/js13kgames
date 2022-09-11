@@ -11,7 +11,7 @@
     "radius": 10,
     "speed": 70,
     "imgPath": "./dist/images/zebra.png",
-    "target": ["plant"]
+    "target": ["grass"]
   },
   "lion": {
     "name": "lion",
@@ -39,6 +39,6 @@
     "radius": 10,
     "speed": 20,
     "imgPath": "./dist/images/reaper.png",
-    "target": ["plant", "lion", "person_male", "person_female"]
+    "target": ["grass", "zebra", "lion", "person_male", "person_female"]
   }
 }
