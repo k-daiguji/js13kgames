@@ -18,21 +18,34 @@ export class Enemy extends Character {
   }
 
   decideDirection(): void {
-    if (!this.targets) return;
-    this.targets.forEach((t: Character): void => {
-      if (!t.isAlive()) return;
+    if (this.targets.some((t: Character): boolean => t.isAlive())) {
+      this.targets.forEach((t: Character): void => {
+        if (!t.isAlive()) return;
+        if (Math.random() < 0.5) {
+          t.getCx() - this.getCx() < 0
+            ? (this.nextDirection.x = -1)
+            : (this.nextDirection.x = 1);
+          this.nextDirection.y = 0;
+        } else {
+          this.nextDirection.x = 0;
+          t.getCy() - this.getCy() < 0
+            ? (this.nextDirection.y = -1)
+            : (this.nextDirection.y = 1);
+        }
+      });
+    } else {
       if (Math.random() < 0.5) {
-        t.getCx() - this.getCx() < 0
+        Math.random() < 0.5
           ? (this.nextDirection.x = -1)
           : (this.nextDirection.x = 1);
         this.nextDirection.y = 0;
       } else {
         this.nextDirection.x = 0;
-        t.getCy() - this.getCy() < 0
+        Math.random() < 0.5
           ? (this.nextDirection.y = -1)
           : (this.nextDirection.y = 1);
       }
-    });
+    }
   }
   move1(duration: number): void {
     this.decideDirection();
