@@ -9,35 +9,35 @@
   "zebra": {
     "name": "zebra",
     "radius": 10,
-    "speed": 70,
+    "speed": 80,
     "imgPath": "./dist/images/zebra.png",
     "target": ["grass"]
   },
   "lion": {
     "name": "lion",
     "radius": 10,
-    "speed": 50,
+    "speed": 70,
     "imgPath": "./dist/images/lion.png",
     "target": ["zebra"]
   },
   "person_male": {
     "name": "person_male",
     "radius": 10,
-    "speed": 30,
+    "speed": 60,
     "imgPath": "./dist/images/person_male.png",
     "target": ["lion"]
   },
   "person_female": {
     "name": "person_female",
     "radius": 10,
-    "speed": 30,
+    "speed": 50,
     "imgPath": "./dist/images/person_female.png",
     "target": ["lion"]
   },
   "reaper": {
     "name": "reaper",
     "radius": 10,
-    "speed": 20,
+    "speed": 50,
     "imgPath": "./dist/images/reaper.png",
     "target": ["grass", "zebra", "lion", "person_male", "person_female"]
   }
