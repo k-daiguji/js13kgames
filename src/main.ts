@@ -20,9 +20,14 @@ const createEnemy = (map: GameMap, player: Player): Enemy[] => {
 };
 
 const Main = (): void => {
-  const canvas: HTMLCanvasElement = document.getElementById(
-    "main"
-  ) as HTMLCanvasElement;
+  const canvas: HTMLCanvasElement = document.createElement("canvas");
+  canvas.setAttribute("width", "450");
+  canvas.setAttribute("height", "450");
+  canvas.style.marginLeft = "auto";
+  canvas.style.marginRight = "auto";
+  canvas.style.textAlign = "left";
+  canvas.style.width = "600px";
+  document.body.append(canvas);
   const ctx: CanvasRenderingContext2D = canvas.getContext(
     "2d"
   ) as CanvasRenderingContext2D;
@@ -30,6 +35,7 @@ const Main = (): void => {
   const p = CharacterParams.grass;
   const player: Player = new Player(p.name, p.radius, p.speed, p.imgPath, map);
   let enemies: Enemy[] = createEnemy(map, player);
+  let endFlag = false;
 
   canvas.tabIndex = 1;
   canvas.onkeydown = (event): void => {
@@ -50,6 +56,12 @@ const Main = (): void => {
       case "Right":
       case "ArrowRight":
         player.goMove(4);
+        break;
+      default:
+        if (endFlag) {
+          endFlag = false;
+          window.location.reload();
+        }
         break;
     }
   };
@@ -85,17 +97,32 @@ const Main = (): void => {
       playLoop(duration);
       if (aliveEnemies.length === 1) {
         enemies.push(aliveEnemies[0]);
-        alert("Clear!");
-        window.location.reload();
+        message(canvas, ctx, "Game Clear!", "#0000FF");
+        endFlag = true;
+        return;
       }
       prevDrawTime = timestamp;
       window.requestAnimationFrame(mainLoop);
     } else {
-      alert("Game Over!");
-      window.location.reload();
+      message(canvas, ctx, "Game Over!", "#FF0000");
+      endFlag = true;
+      return;
     }
   };
   window.requestAnimationFrame(mainLoop);
 };
 
 Main();
+
+const message = (
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  message: string,
+  color: string
+): void => {
+  ctx.font = "48px serif";
+  ctx.fillStyle = color;
+  ctx.fillText(message, canvas.width / 4.5, canvas.height / 2.8);
+  ctx.font = "36px serif";
+  ctx.fillText("Press any key.", canvas.width / 4, canvas.height / 2);
+};

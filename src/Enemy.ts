@@ -65,7 +65,9 @@ export class Enemy extends Character {
       if (!t.isAlive()) return;
       if (this.getDistance(t) <= Math.max(this.radius, t.radius)) {
         t.die();
-        (document.getElementById("sound") as HTMLAudioElement)?.play();
+        const audio: HTMLAudioElement = document.createElement("audio");
+        audio.setAttribute("src", "dist/sounds/disappear.wav");
+        audio.play();
       }
     });
   }
