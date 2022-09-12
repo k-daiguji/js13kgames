@@ -27,14 +27,21 @@ const createEnemy = (map: GameMap, player: Player): Enemy[] => {
   return enemies;
 };
 
+let first = true;
 const Main = (
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   p: character
 ): void => {
+  first = false;
   const map: GameMap = new GameMap(0, 0, 30, 30, "#84C98B");
   const player: Player = new Player(p.name, p.radius, p.speed, p.imgPath, map);
   let enemies: Enemy[] = createEnemy(map, player);
+  enemies.forEach((e: Enemy): void => {
+    if (p.target.includes(e.name)) {
+      player.setTarget(e);
+    }
+  });
   let endFlag = false;
 
   canvas.tabIndex = 1;
@@ -130,7 +137,7 @@ const startScreen = (): void => {
   canvas.style.marginLeft = "auto";
   canvas.style.marginRight = "auto";
   canvas.style.textAlign = "left";
-  canvas.style.width = "600px";
+  canvas.style.width = "450px";
   document.body.append(canvas);
   const ctx: CanvasRenderingContext2D = canvas.getContext(
     "2d"
@@ -151,10 +158,27 @@ const startScreen = (): void => {
   });
 
   canvas.tabIndex = 1;
-  document.body.onkeydown = (e: KeyboardEvent): void => {
-    e.preventDefault();
-    Main(canvas, ctx, CharacterParams.grass);
-  };
+  canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    if (!first) return;
+    if (270 < y && y < 300) {
+      if (135 < x && x <= 165) {
+        Main(canvas, ctx, CharacterParams.grass);
+      } else if (165 < x && x <= 195) {
+        Main(canvas, ctx, CharacterParams.zebra);
+      } else if (195 < x && x <= 225) {
+        Main(canvas, ctx, CharacterParams.lion);
+      } else if (225 < x && x <= 255) {
+        Main(canvas, ctx, CharacterParams.person_male);
+      } else if (255 < x && x <= 285) {
+        Main(canvas, ctx, CharacterParams.person_female);
+      } else if (285 < x && x <= 315) {
+        Main(canvas, ctx, CharacterParams.reaper);
+      }
+    }
+  });
 };
 const title = (
   canvas: HTMLCanvasElement,
@@ -166,7 +190,7 @@ const title = (
   ctx.fillStyle = color;
   ctx.fillText(message, (canvas.width - 24 * message.length) / 2, 190);
   ctx.font = "36px serif";
-  ctx.fillText("Press any key.", 115, 250);
+  ctx.fillText("Click your character.", 60, 250);
 };
 
 startScreen();

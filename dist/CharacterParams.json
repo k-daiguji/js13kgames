@@ -18,21 +18,21 @@
     "radius": 10,
     "speed": 70,
     "imgPath": "./dist/images/lion.png",
-    "target": ["zebra"]
+    "target": ["grass", "zebra"]
   },
   "person_male": {
     "name": "person_male",
     "radius": 10,
     "speed": 60,
     "imgPath": "./dist/images/person_male.png",
-    "target": ["lion"]
+    "target": ["grass", "zebra", "lion", "person_female"]
   },
   "person_female": {
     "name": "person_female",
     "radius": 10,
     "speed": 50,
     "imgPath": "./dist/images/person_female.png",
-    "target": ["lion"]
+    "target": ["grass", "zebra", "lion", "person_male"]
   },
   "reaper": {
     "name": "reaper",

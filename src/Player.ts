@@ -3,7 +3,7 @@ import { Character } from "./Character";
 
 export class Player extends Character {
   imagePath: string;
-  targets: Character[] | undefined;
+  targets: Character[];
 
   constructor(
     name: string,
@@ -14,6 +14,7 @@ export class Player extends Character {
   ) {
     super(name, radius, speed, map);
     this.imagePath = imagePath;
+    this.targets = [];
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -37,8 +38,8 @@ export class Player extends Character {
         break;
     }
   }
-  setTarget(targets: Character[]): void {
-    this.targets = targets;
+  setTarget(target: Character): void {
+    this.targets.push(target);
   }
   killTarget(): void {
     if (!this.targets) return;
